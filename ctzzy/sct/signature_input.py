@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('../../')
 import struct
 from functools import reduce
 

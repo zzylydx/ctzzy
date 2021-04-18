@@ -8,6 +8,9 @@ https://github.com/pierky/sct-verify/blob/master/sct-verify.py (under GPL)
 He also described the SCT verification steps very well in his blog:
 https://blog.pierky.com/certificate-transparency-manually-verify-sct-with-openssl/
 '''
+import sys
+
+sys.path.append('../../')
 
 import argparse
 import logging
@@ -36,10 +39,12 @@ def create_parser():
                         default=False,
                         version=__version__,
                         help='print version number')
-    parser.add_argument('-df','--domain-file',
+    parser.add_argument('-df','--domainfile',
                         required=True,
-                        help="A file that contains a list of domain names.")
-    meg = parser.add_mutually_exclusive_group() # 创建一个互斥组。 argparse 将会确保互斥组中只有一个参数在命令行中可用
+                        type=str,
+                        metavar='',
+                        help="A file that contains a list of domain names")
+    meg = parser.add_mutually_exclusive_group()  # 创建一个互斥组。 argparse 将会确保互斥组中只有一个参数在命令行中可用
     meg.add_argument('--short',
                      dest='loglevel',
                      action='store_const',
@@ -64,7 +69,7 @@ def create_parser():
     meg1.add_argument('--tls-only',
                       dest='verification_tasks',
                       action='store_const',
-                      const=[verify_scts_by_tls], #调用对应的函数
+                      const=[verify_scts_by_tls],  # 调用对应的函数
                       help='only verify SCTs gathered from TLS handshake')
     meg1.add_argument('--ocsp-only',
                       dest='verification_tasks',
@@ -105,7 +110,7 @@ def verify_scts_by_cert(res, ctlogs):
     return verify_scts(
         ee_cert=res.ee_cert,
         scts=res.scts_by_cert,
-        logs=ctlogs, # CT 列表
+        logs=ctlogs,  # CT 列表
         issuer_cert=res.issuer_cert,
         more_issuer_cert_candidates=res.more_issuer_cert_candidates,
         sign_input_func=create_signature_input_precert)
@@ -224,7 +229,7 @@ def show_verification(verification):
 def scrape_and_verify_scts(hostname, verification_tasks, ctlogs):
     logger.info('# %s\n' % hostname)
 
-    res = do_handshake(hostname,443,
+    res = do_handshake(hostname, 443,
                        scts_tls=(verify_scts_by_tls in verification_tasks),
                        scts_ocsp=(verify_scts_by_ocsp in verification_tasks))
     if res.ee_cert_der:
@@ -271,8 +276,8 @@ def main():
         logs_dict = read_log_list(args.log_list_filename)
         set_operator_names(logs_dict)
         ctlogs = Logs(logs_dict['logs'])
-    if os.path.isfile(Path(args.df)):
-        with open(args.df,'r') as f:
+    if os.path.isfile(Path(args.domainfile)):
+        with open(args.domainfile, 'r') as f:
             host = f.readline()
             while host:
                 scrape_and_verify_scts(host, args.verification_tasks, ctlogs)
@@ -287,6 +292,7 @@ if __name__ == '__main__':
     # README.md (section Devel-Commands) the c-code part needs to be compiled,
     # else the import of the c-module `ctzzy.tls.handshake_openssl` would fail.
     import ctzzy.tls.openssl_build
+
     ctzzy.tls.openssl_build.compile()
 
     main()

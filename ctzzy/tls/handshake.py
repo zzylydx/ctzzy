@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('../../')
 import binascii
 import socket
 import struct
@@ -172,7 +175,7 @@ def create_context(scts_tls, scts_ocsp, timeout):
 
     ctx.tls_ext_18_tdf = None  # 不懂
     if scts_tls:
-        from ctzzy.tls.openssl_build import ffi, lib  # 完全不懂
+        from ctzzy.tls.handshake_openssl import ffi, lib  # 完全不懂
 
         @ffi.def_extern()
         def serverinfo_cli_parse_cb(ssl, ext_type, _in, inlen, al, arg):

@@ -9,6 +9,9 @@ https://cffi.readthedocs.io/en/latest/using.html#extern-python-new-style-callbac
 FFI means foreign function interface:
 https://enwikipedia.org/wiki/Foreign_function_interface
 """
+import sys
+
+sys.path.append('../../')
 
 from cffi import FFI
 

@@ -1,7 +1,9 @@
 '''namedtuple defs which represent the data structures defined in RFC 6962 -
 Certificate Transparency.
 '''
+import sys
 
+sys.path.append('../../')
 import struct
 
 from pyasn1.codec.der.encoder import encode as der_encoder

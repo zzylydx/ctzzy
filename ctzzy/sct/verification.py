@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('../../')
 import collections
 
 from cryptography.hazmat.backends.openssl.backend import backend

@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('../../')
 import collections
 
 from utlz import flo,StructContext
